@@ -1,0 +1,79 @@
+/* eslint-disable no-undef */
+
+
+
+const express = require("express");
+const tourController = require("./../controllers/tourController");
+//const {getAlltours,createTour}=require('./../controllers/tourController')
+const authController = require("./../controllers/authController");
+//const bookingController = require("./../controllers/bookingController");
+const reviewRouter = require("./../routes/reviewRoutes");
+const bookingRouter = require("./../routes/bookingRoutes");
+
+const router = express.Router();
+//POST /tours/tour id:(35445)/reviews
+//router
+//  .route("/:tourId/reviews")
+//  .post(
+//    authController.protect,
+//    authController.restrictTo("user"),
+//    reviewController.createReview
+//  );
+
+router.use("/:tourId/reviews", reviewRouter);
+///tours/:id/bookings and /users/:id/bookings;
+router.use('/:tourId/bookings',bookingRouter)
+
+//router.param('id',tourController.checkID)
+
+router
+  .route("/top-5-cheap")
+  .get(tourController.aliasTopTours, tourController.getAllTours);
+router.route("/tour-stats").get(tourController.getTourStats);
+router
+  .route("/monthly-plan/:year")
+  .get(
+    authController.protect,
+    authController.restrictTo("admin", "lead-guide", "guide"),
+    tourController.getMonthlyPlan
+  );
+ 
+//tours-within/:distance/center/:latlng/unit/:unit
+//tours-within?distance=233&center=-40,45&unit=mi
+
+
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(tourController.getToursWithin);
+
+router.route("/distances/:latlng/unit/:unit").get(tourController.getDistances);
+
+router
+  .route(`/`)
+  //.get(authController.protect,tourController.getAllTours)
+  .get(tourController.getAllTours)
+  //.post(tourController.checkBody,tourController.createTour);
+  .post(
+    authController.protect,
+    authController.restrictTo("admin", "lead-guide"),
+    tourController.createTour
+  );
+
+router
+  .route(`/:id`)
+  .get(authController.protect,tourController.getTour)
+  .patch(
+    authController.protect,
+    authController.restrictTo("admin", "lead-guide"),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
+    tourController.updateTour
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo("admin", "lead-guide"),
+    tourController.deleteTour
+  );
+
+module.exports = router;
+
