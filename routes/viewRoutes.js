@@ -5,6 +5,8 @@ const bookingController = require("../controllers/bookingController");
 
 const router = express.Router();
 
+router.use(viewsController.alerts)
+
 //router.get('/overview',(req,res)=>{
 //  res.status(200).render('overview',{
 
@@ -19,7 +21,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  bookingController.createBookingCheckout, 
+ // bookingController.createBookingCheckout, 
   authController.isLoggedIn,
   viewsController.getOverview
 );
@@ -27,11 +29,14 @@ router.get("/tour/:slug", authController.isLoggedIn, viewsController.getTour);
 router.get('/signup',viewsController.getSignupForm)
 router.get("/login", authController.isLoggedIn, viewsController.getLoginForm);
 router.get("/me", authController.protect, viewsController.getAccount);
-router.get("/my-tours", authController.protect, viewsController.getMyTours);
+router.get("/my-tours",
+//bookingController.createBookingCheckout,
+ authController.protect,
+  viewsController.getMyTours);
 router.get('/my-reviews',authController.isLoggedIn,viewsController.getMyReviews)
 
-//router.post('/submit-user-data',authController.protect, viewsController.updateUserData)
 /*
+router.post('/submit-user-data',authController.protect, viewsController.updateUserData)
 router.get('/', authController.isLoggedIn, viewsController.getOverview);
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
 router.get('/login', authController.isLoggedIn, viewsController.getLoginForm);

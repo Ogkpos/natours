@@ -21,6 +21,7 @@ const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const bookingRouter = require("./routes/bookingRoutes");
+const bookingController=require('./controllers/bookingController')
 const viewRouter = require("./routes/viewRoutes");
 
 
@@ -53,6 +54,8 @@ const limiter=rateLimit({
 })
 
 app.use('/api',limiter) 
+
+app.post('/webhook-checkout',express.raw({type:'application/json'}),bookingController.webhookCheckout )
  
 app.options('*',cors())
 
@@ -106,32 +109,6 @@ app.use((req, res, next) => {
   next();
 });
 
-//Route Handlers
-//app.get(`/api/v1/tours`,getAlltours)
-//app.post(`/api/v1/tours`,createTour)
-//app.get(`/api/v1/tours/:id`,getTour)
-//app.patch(`/api/v1/tours/:id`,UpdateTour)
-//app.delete(`/api/v1/tours/:id`,deleteTour)
-
-//Routes
-//app.get('/',(req,res)=>{
-//    res.status(200).render('base',{
-//        tour:'The Forest Hiker', 
-//        user:'Jonas'
-//    })
-//})
-////
-//app.get('/overview',(req,res)=>{
-//    res.status(200).render('overview',{
-//        title:'All Tours'
-//    })
-//})
-//
-//app.get('/tour',(req,res)=>{
-//    res.status(200).render('tour',{
-//        title:'The forest Hiker'
-//    })
-//})
           
 app.use("/",viewRouter)
 app.use("/api/v1/tours", tourRouter);
